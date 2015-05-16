@@ -1,6 +1,33 @@
 {
+  "name": "polycliniqueborinage/appointment-api",
+  "type": "api",
+  "description": "A appointment api",
+  "keywords": [
+    "framework", "silex", "rest", "api"
+  ],
+  "homepage": "http://github.com/polycliniqueborinage/appointment-api",
+  "license": "MIT",
+  "authors": [{
+    "name": "David Calcus",
+    "email": "targoo@gmail.com"
+  }],
+  "require": {
+    "php": ">=5.4.0"
+  },
   "require": {
     "silex/silex": "~1.2",
-    "doctrine/dbal": "2.5.1"
+    "doctrine/dbal": "2.5.1",
+    "nesbot/carbon": "1.19.0",
+    "sami/sami": "3.0.3",
+    "psr/log": "1.0.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "4.6.6",
+    "mockery/mockery": "0.9.4"
+  },
+  "autoload": {
+    "psr-0": {
+      "App": "src/"
+    }
   }
 }
