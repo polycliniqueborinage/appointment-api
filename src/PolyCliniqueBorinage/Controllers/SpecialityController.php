@@ -1,6 +1,6 @@
 <?php
 
-namespace PolyCliniqueBorinage\Controller;
+namespace PolyCliniqueBorinage\Controllers;
 
 use Silex\ControllerProviderInterface;
 use Silex\Application;
