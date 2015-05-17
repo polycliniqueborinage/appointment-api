@@ -1,3 +1,4 @@
+examples/
 vendor/
 .DS_Store
 var/cache

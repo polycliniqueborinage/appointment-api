@@ -1,6 +1,17 @@
 <?php
 
 use Symfony\Component\HttpFoundation\Response;
+use PolyCliniqueBorinage\Controller\DoctorController;
+use PolyCliniqueBorinage\Controller\SpecialityController;
+
+
+$app->get('/', function () {
+  return "Welcome To ReSTful API";
+});
+
+$app->mount('/doctor', new DoctorController());
+
+$app->mount('/speciality', new SpecialityController());
 
 // Catch errors.
 $app->error(function (\Exception $e, $code) use ($app) {
