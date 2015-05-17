@@ -8,7 +8,6 @@ use Silex\Route;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class SpecialityController implements ControllerProviderInterface{
@@ -17,8 +16,12 @@ class SpecialityController implements ControllerProviderInterface{
 
     $controllers = $app['controllers_factory'];
 
-    $controllers->match('/', function(Request $request) use ($app) {
-      return 'SpecialityController';
+    $controllers->get('/', function(Request $request) use ($app) {
+      return new JsonResponse($app['speciality.service']->getAll());
+    });
+
+    $controllers->get('/{id}', function(Request $request, $id) use ($app) {
+      return new JsonResponse($app['speciality.service']->get($id));
     });
 
     return $controllers;

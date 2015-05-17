@@ -6,7 +6,6 @@ use Silex\Provider\UrlGeneratorServiceProvider;
 use Silex\Provider\ValidatorServiceProvider;
 use Silex\Provider\ServiceControllerServiceProvider;
 use PolyCliniqueBorinage\ServicesLoader;
-use PolyCliniqueBorinage\ControllersLoader;
 
 // Need to set up timezone.
 date_default_timezone_set('Europe/Brussels');
@@ -40,9 +39,5 @@ $app['twig'] = $app->share($app->extend('twig', function ($twig, $app) {
 // Load services.
 $servicesLoader = new ServicesLoader($app);
 $servicesLoader->bindServicesIntoContainer();
-
-// Load controllers.
-$controllersloader = new ControllersLoader($app);
-$controllersloader->instantiateControllers();
 
 return $app;

@@ -5,15 +5,15 @@ use PolyCliniqueBorinage\Controllers\DoctorController;
 use PolyCliniqueBorinage\Controllers\SpecialityController;
 
 // Front.
-$app->get('/', function () {
-  return "Welcome To ReSTful API";
+$app->get($app["api.endpoint"].'/'.$app["api.version"] . '/', function () {
+  return "PolyClinique API";
 });
 
 // Doctors.
-$app->mount('/doctor', new DoctorController());
+$app->mount($app["api.endpoint"].'/'.$app["api.version"] . '/doctor', new DoctorController());
 
 // Specialities.
-$app->mount('/speciality', new SpecialityController());
+$app->mount($app["api.endpoint"].'/'.$app["api.version"] . '/speciality', new SpecialityController());
 
 // Catch errors.
 $app->error(function (\Exception $e, $code) use ($app) {

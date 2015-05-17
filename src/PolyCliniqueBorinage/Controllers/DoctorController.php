@@ -16,20 +16,12 @@ class DoctorController implements ControllerProviderInterface{
 
     $controllers = $app['controllers_factory'];
 
-    $controllers->match('/list', function(Request $request) use ($app) {
-      $users = $app['doctor.service']->getAll();
+    $controllers->get('/', function(Request $request) use ($app) {
+      return new JsonResponse($app['doctor.service']->getAll());
+    });
 
-      switch ($request->get('format')) {
-        case 'html':
-          // @todo: injest value into template.
-          $templates = array(
-            'doctors/default.html',
-          );
-          return new Response($app['twig']->resolveTemplate($templates)->render(array('code' => 200)), 200);
-          break;
-        default:
-          return new JsonResponse($users);
-      }
+    $controllers->get('/{id}', function(Request $request, $id) use ($app) {
+      return new JsonResponse($app['doctor.service']->get($id));
     });
 
     return $controllers;
