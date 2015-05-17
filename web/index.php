@@ -1,25 +1,13 @@
 <?php
-require_once '../vendor/autoload.php';
 
-// Init Silex app.
-$app = new Silex\Application();
+ini_set('display_errors', 0);
 
-// define route for /countries
-$app->get('/countries', function () {
-  return "countries list";
-});
+require_once __DIR__.'/../vendor/autoload.php';
 
-// define route for /countries/{id}
-$app->get('/countries/{id}', function ($id) {
-  return "country's cities list for id: $id";
-// id must be digital
-})->assert('id', '\d+');
+$app = require __DIR__.'/../src/app.php';
 
-// default route
-$app->get('/', function () {
-  return "List of avaiable methods:
-  - /countries - returns list of existing countries;
-  - /countries/{id} - returns list of country's cities by id;";
-});
+require __DIR__.'/../config/prod.php';
+
+require __DIR__.'/../src/controllers.php';
 
 $app->run();

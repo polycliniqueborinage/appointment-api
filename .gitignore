@@ -1,2 +1,7 @@
-.idea/
 vendor/
+.DS_Store
+var/cache
+var/cache/**
+var/logs/silex_dev.log
+.idea/
+cache/**
