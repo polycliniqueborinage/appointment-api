@@ -19,5 +19,9 @@ class ServicesLoader {
     $this->app['speciality.service'] = $this->app->share(function () {
       return new Services\SpecialityService($this->app["db"]);
     });
+
+    $this->app['booking.service'] = $this->app->share(function () {
+      return new Services\BookingService($this->app["db"]);
+    });
   }
 }

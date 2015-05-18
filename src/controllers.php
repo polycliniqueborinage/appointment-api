@@ -3,6 +3,7 @@
 use Symfony\Component\HttpFoundation\Response;
 use PolyCliniqueBorinage\Controllers\DoctorController;
 use PolyCliniqueBorinage\Controllers\SpecialityController;
+use PolyCliniqueBorinage\Controllers\BookingController;
 
 // Front.
 $app->get($app["api.endpoint"].'/'.$app["api.version"] . '/', function () {
@@ -14,6 +15,9 @@ $app->mount($app["api.endpoint"].'/'.$app["api.version"] . '/doctor', new Doctor
 
 // Specialities.
 $app->mount($app["api.endpoint"].'/'.$app["api.version"] . '/speciality', new SpecialityController());
+
+// Bookings.
+$app->mount($app["api.endpoint"].'/'.$app["api.version"] . '/booking', new BookingController());
 
 // Catch errors.
 $app->error(function (\Exception $e, $code) use ($app) {
