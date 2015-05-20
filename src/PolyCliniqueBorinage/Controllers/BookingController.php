@@ -16,8 +16,11 @@ class BookingController implements ControllerProviderInterface{
 
     $controllers = $app['controllers_factory'];
 
-    $controllers->get('/{id}', function(Request $request, $id) use ($app) {
-      return new JsonResponse($app['booking.service']->get($id));
+    // http://local.drupal8:8888/index_dev.php/api/v1/booking/day/11111111111/2015-05-18
+    // http://local.drupal8:8888/api/v1/booking/day/11111111111/2015-05-19
+    $controllers->get('/day/{id}/{date}', function(Request $request, $id, $date) use ($app) {
+      // return new Response($app['twig']->resolveTemplate(array('doctors/default.html'))->render(array('code' => 200)), 200);
+      return new JsonResponse($app['booking.service']->getAvailableSlotByDate($id, $date));
     });
 
     return $controllers;
