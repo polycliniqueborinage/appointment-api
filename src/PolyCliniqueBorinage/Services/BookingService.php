@@ -2,23 +2,26 @@
 
 namespace PolyCliniqueBorinage\Services;
 
-const BOOKING_ENABLE = '#c5f7c5';
-const BOOKING_BUSY = '#b5cbe7';
-const BOOKING_OFFLINE = '#f8e9c6';
+const BOOKING_SERVICE_ENABLE = '#c5f7c5';
+const BOOKING_SERVICE_BUSY = '#b5cbe7';
+const BOOKING_SERVICE_OFFLINE = '#f8e9c6';
 
-const BOOKING_FIRST_HOUR = '7:00';
-const BOOKING_LAST_HOUR = '19:00';
+const BOOKING_SERVICE_FIRST_HOUR = '7:00';
+const BOOKING_SERVICE_LAST_HOUR = '19:00';
 
 use Carbon\Carbon;
 
 class BookingService extends BaseService {
 
   /**
+   * Get all the slot available for a day.
+   *
    * @param string $id
    * @param string $date
-   * @return mixed
+   * @return array $slots
+   *   Available slots.
    */
-  public function getAvailableSlotByDate($id, $date) {
+  public function getAvailableSlotsByDate($id, $date) {
 
     $consult_length = 30;
 
@@ -28,10 +31,10 @@ class BookingService extends BaseService {
     $events = $this->getEvents($id, $date);
 
     // Morning slot.
-    $morning_slot = $this->getMorningSlot();
+    $morning_slot = $this->getMorningSlot($id, $date);
 
     // Evening slot.
-    $evening_slot = $this->getEveningSlot();
+    $evening_slot = $this->getEveningSlot($id, $date);
 
     // Unavailable slots list.
     $unavailable_slots = $this->getBusySlots($id, $date);
@@ -43,7 +46,7 @@ class BookingService extends BaseService {
     $slots = array();
 
     // Available slots list.
-    $available_slots = $this->getAllSlots($consult_length);
+    $available_slots = $this->getAllSlots($date, $consult_length);
     foreach($available_slots as $key => $slot_proposal) {
       if ($this ->isValidSlot($slot_proposal, $all_busy_slots)) {
         $all_busy_slots[] = $slot_proposal;
@@ -53,6 +56,43 @@ class BookingService extends BaseService {
     return $slots;
   }
 
+  /**
+   * Get all the slot available for a week.
+   *
+   * @param string $id
+   * @param string $date
+   * @return array $slots
+   *   Available slots.
+   */
+  public function getAvailableSlotsByWeek($id, $date) {
+
+    $consult_length = 30;
+
+    $date = Carbon::createFromFormat('Y-m-d', $date);
+
+    $slots = array();
+
+    return $slots;
+  }
+
+  /**
+   * Get all the slot available for a week.
+   *
+   * @param string $id
+   * @param string $date
+   * @return array $slots
+   *   Available slots.
+   */
+  public function getAvailableSlotsByMonth($id, $date) {
+
+    $consult_length = 30;
+
+    $date = Carbon::createFromFormat('Y-m-d', $date);
+
+    $slots = array();
+
+    return $slots;
+  }
 
   /**
    * Get all events for the a specific date and calendar.
@@ -70,8 +110,11 @@ class BookingService extends BaseService {
     );
 
     foreach($events as $key => $event) {
-      $events[$key]['carbon_start'] = Carbon::createFromFormat('H:i', str_replace("H", ":", $events[$key]['start']));
-      $events[$key]['carbon_end'] = Carbon::createFromFormat('H:i', str_replace("H", ":", $events[$key]['end']));
+      $events[$key]['type'] = 'event';
+      $events[$key]['carbon_start'] = Carbon::createFromFormat('Y-m-d H:i', $date->toDateString() . ' ' . str_replace("H", ":", $events[$key]['start']));
+      $events[$key]['carbon_end'] = Carbon::createFromFormat('Y-m-d H:i', $date->toDateString() . ' ' . str_replace("H", ":", $events[$key]['end']));
+      unset($events[$key]['start']);
+      unset($events[$key]['end']);
     }
 
     return $events;
@@ -88,13 +131,16 @@ class BookingService extends BaseService {
    */
   protected function getBusySlots($id, Carbon $date) {
     $slots = $this->db->fetchAll("SELECT `id`, `day` FROM `horaire_presence_" . $id . "` WHERE color != :color AND day = :day", array(
-        'color' => BOOKING_ENABLE,
+        'color' => BOOKING_SERVICE_ENABLE,
         'day' => $date->format('w'),
       )
     );
     foreach($slots as $key => $slot) {
-      $slots[$key]['carbon_start'] = Carbon::createFromFormat('H:i', str_replace("H", ":", $slots[$key]['id']));
-      $slots[$key]['carbon_end'] = Carbon::createFromFormat('H:i', str_replace("H", ":", $slots[$key]['id']))->addMinutes(10);
+      $slots[$key]['type'] = 'busy_slot';
+      $slots[$key]['carbon_start'] = Carbon::createFromFormat('Y-m-d H:i', $date->toDateString() . ' ' . str_replace("H", ":", $slots[$key]['id']));
+      $slots[$key]['carbon_end'] = Carbon::createFromFormat('Y-m-d H:i', $date->toDateString() . ' ' . str_replace("H", ":", $slots[$key]['id']))->addMinutes(10);
+      unset($slots[$key]['id']);
+      unset($slots[$key]['day']);
     }
     return $slots;
   }
@@ -111,7 +157,7 @@ class BookingService extends BaseService {
    */
   protected function getAvailableSlots($id, Carbon $date, $consult_length) {
     $slots = $this->db->fetchAll("SELECT `id`, `day` FROM `horaire_presence_" . $id . "` WHERE color = :color AND day = :day", array(
-        'color' => BOOKING_ENABLE,
+        'color' => BOOKING_SERVICE_ENABLE,
         'day' => $date->format('w'),
       )
     );
@@ -125,15 +171,16 @@ class BookingService extends BaseService {
   /**
    * Get all available slots for the a specific date and calendar.
    *
+   * @param Carbon $date
    * @param int $consult_length
    *
    * @return array $events
    *   Events lists.
    */
-  protected function getAllSlots($consult_length) {
+  protected function getAllSlots(Carbon $date, $consult_length) {
     $slots = array();
-    $start = Carbon::createFromFormat('H:i', BOOKING_FIRST_HOUR);
-    $end = Carbon::createFromFormat('H:i', BOOKING_LAST_HOUR);
+    $start = Carbon::createFromFormat('Y-m-d H:i', $date->toDateString() . ' ' .BOOKING_SERVICE_FIRST_HOUR);
+    $end = Carbon::createFromFormat('Y-m-d H:i', $date->toDateString() . ' ' .BOOKING_SERVICE_LAST_HOUR);
 
     $i  = 0;
     while ($start->lt($end)) {
@@ -150,24 +197,32 @@ class BookingService extends BaseService {
   /**
    * Get morning slot.
    *
+   * @param String $id
+   * @param Carbon $date
+   *
    * @return array $slot
    *   Return morning slot.
    */
-  protected function getMorningSlot() {
-    $slot[0]['carbon_start'] = Carbon::createFromFormat('H:i', '0:00');
-    $slot[0]['carbon_end'] = Carbon::createFromFormat('H:i', BOOKING_FIRST_HOUR);
+  protected function getMorningSlot($id, Carbon $date) {
+    $slot[0]['type'] = 'morning';
+    $slot[0]['carbon_start'] = Carbon::createFromFormat('Y-m-d H:i', $date->toDateString() . ' ' . '0:00');
+    $slot[0]['carbon_end'] = Carbon::createFromFormat('Y-m-d H:i', $date->toDateString() . ' ' .BOOKING_SERVICE_FIRST_HOUR);
     return $slot;
   }
 
   /**
    * Get evening slot.
    *
+   * @param String $id
+   * @param Carbon $date
+   *
    * @return array $slot
    *   Return evening slot.
    */
-  protected function getEveningSlot() {
-    $slot[0]['carbon_start'] = Carbon::createFromFormat('H:i', BOOKING_LAST_HOUR);
-    $slot[0]['carbon_end'] = Carbon::createFromFormat('H:i', '24:00');
+  protected function getEveningSlot($id, Carbon $date) {
+    $slot[0]['type'] = 'evening';
+    $slot[0]['carbon_start'] = Carbon::createFromFormat('Y-m-d H:i', $date->toDateString() . ' ' . BOOKING_SERVICE_LAST_HOUR);
+    $slot[0]['carbon_end'] = Carbon::createFromFormat('Y-m-d H:i', $date->toDateString() . ' ' . '24:00');
     return $slot;
   }
 
@@ -179,7 +234,7 @@ class BookingService extends BaseService {
    * @return bool
    *   Wether or not the date intervals overlap
    */
-  public function isValidSlot($proposed_slot, $busy_slots) {
+  protected function isValidSlot($proposed_slot, $busy_slots) {
     if (!empty($busy_slots)) {
       foreach ($busy_slots as $busy_slot) {
         if ($this->datesOverlap($proposed_slot, $busy_slot)) {
@@ -198,7 +253,7 @@ class BookingService extends BaseService {
    * @return bool
    *   Wether or not the date intervals overlap
    */
-  public function datesOverlap($date1, $date2) {
+  protected function datesOverlap($date1, $date2) {
     $start1 = $date1['carbon_start'];
     $end1 = $date1['carbon_end'];
     $start2 = $date2['carbon_start'];
