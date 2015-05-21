@@ -5,11 +5,11 @@ namespace PolyCliniqueBorinage\Services;
 class DoctorService extends BaseService {
 
   public function getAll() {
-    return $this->db->fetchAll("SELECT id, firstname, familyname, gender, type, speciality, length_consult FROM user");
+    return $this->db->fetchAll("SELECT id, firstname, familyname, gender, type, speciality, length_consult, inami FROM user");
   }
 
   public function get($id) {
-    return $this->db->fetchAssoc("SELECT * FROM user WHERE id = :id", array(
+    return $this->db->fetchAssoc("SELECT id, firstname, familyname, gender, type, speciality, length_consult, inami FROM user WHERE id = :id", array(
       'id' => $id,
       )
     );

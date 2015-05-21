@@ -6,18 +6,18 @@ use PolyCliniqueBorinage\Controllers\SpecialityController;
 use PolyCliniqueBorinage\Controllers\BookingController;
 
 // Front.
-$app->get($app["api.endpoint"].'/'.$app["api.version"] . '/', function () {
+$app->get($app["api.version"] . '/', function () {
   return "PolyClinique API";
 });
 
 // Doctors.
-$app->mount($app["api.endpoint"].'/'.$app["api.version"] . '/doctor', new DoctorController());
+$app->mount($app["api.version"] . '/doctor', new DoctorController());
 
 // Specialities.
-$app->mount($app["api.endpoint"].'/'.$app["api.version"] . '/speciality', new SpecialityController());
+$app->mount($app["api.version"] . '/speciality', new SpecialityController());
 
 // Bookings.
-$app->mount($app["api.endpoint"].'/'.$app["api.version"] . '/booking', new BookingController());
+$app->mount($app["api.version"] . '/booking', new BookingController());
 
 // Catch errors.
 $app->error(function (\Exception $e, $code) use ($app) {
