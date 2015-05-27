@@ -14,6 +14,41 @@ use Carbon\Carbon;
 class BookingService extends BaseService {
 
   /**
+   * Save booking.
+   *
+   * http://silex.sensiolabs.org/doc/cookbook/json_request_body.html
+   *
+   * @param string $booking
+   * @return array $slots
+   *   Available slots.
+   */
+  function save($booking) {
+    $this->db->insert("notes", $booking);
+    return $this->db->lastInsertId();
+  }
+
+  /**
+   * Update booking.
+   *
+   * @param string $id
+   * @param string $booking
+   * @return array $slots
+   *   Available slots.
+   */
+  function update($id, $booking) {
+    return $this->db->update('notes', $booking, ['id' => $id]);
+  }
+
+  /**
+   * Delete booking.
+   *
+   * @param string $id
+   */
+  function delete($id) {
+    return $this->db->delete("notes", array("id" => $id));
+  }
+
+  /**
    * Get all the slot available for a day.
    *
    * @param string $id

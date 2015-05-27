@@ -16,22 +16,29 @@ class BookingController implements ControllerProviderInterface{
 
     $controllers = $app['controllers_factory'];
 
-    // http://local.drupal8:8888/index_dev.php/api/v1/booking/11111111111/day/2015-05-18
-    $controllers->get('/{id}/day/{date}', function(Request $request, $id, $date) use ($app) {
-      // return new Response($app['twig']->resolveTemplate(array('doctors/default.html'))->render(array('code' => 200)), 200);
-      return new JsonResponse($app['booking.service']->getAvailableSlotsByDate($id, $date));
+    // http://local.drupal8:8888/index_dev.php/v1/doctors/2/bookings/2015-05-18?interval=day
+    $controllers->get('/{date}', function(Request $request, $date) use ($app) {
+
+      // Get the doctor.
+      $doctor = $app['doctor.service']->get($request->get('doctorId'));
+
+      switch ($request->get('interval')) {
+        case 'week':
+          return new JsonResponse($app['booking.service']->getAvailableSlotsByWeek($doctor['inami'], $date));
+          break;
+        case 'month':
+          return new JsonResponse($app['booking.service']->getAvailableSlotsByMonth($doctor['inami'], $date));
+          break;
+        default:
+          return new JsonResponse($app['booking.service']->getAvailableSlotsByDate($doctor['inami'], $date));
+      }
+
     });
 
-    // http://local.drupal8:8888/index_dev.php/api/v1/booking/11111111111/week/2015-05-18
-    $controllers->get('/{id}/week/{date}', function(Request $request, $id, $date) use ($app) {
-      // return new Response($app['twig']->resolveTemplate(array('doctors/default.html'))->render(array('code' => 200)), 200);
-      return new JsonResponse($app['booking.service']->getAvailableSlotsByWeek($id, $date));
+    $controllers->post('/{date}', function(Request $request, $date) use ($app) {
     });
 
-    // http://local.drupal8:8888/index_dev.php/api/v1/booking/11111111111/month/2015-05-18
-    $controllers->get('/{id}/month/{date}', function(Request $request, $id, $date) use ($app) {
-      // return new Response($app['twig']->resolveTemplate(array('doctors/default.html'))->render(array('code' => 200)), 200);
-      return new JsonResponse($app['booking.service']->getAvailableSlotsByMonth($id, $date));
+    $controllers->put('/{date}/{id}', function(Request $request, $date) use ($app) {
     });
 
     return $controllers;

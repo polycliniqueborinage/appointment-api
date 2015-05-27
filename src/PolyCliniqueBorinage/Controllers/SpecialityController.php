@@ -26,7 +26,7 @@ class SpecialityController implements ControllerProviderInterface{
     });
 
     // http://local.drupal8:8888/v1/speciality/1/doctor
-    $controllers->get('/{id}/doctor', function(Request $request, $id) use ($app) {
+    $controllers->get('/{id}/doctors', function(Request $request, $id) use ($app) {
       return new JsonResponse($app['speciality.service']->getDoctors($id));
     });
 

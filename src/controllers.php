@@ -10,14 +10,14 @@ $app->get($app["api.version"] . '/', function () {
   return "PolyClinique API";
 });
 
-// Doctors.
-$app->mount($app["api.version"] . '/doctor', new DoctorController());
-
 // Specialities.
-$app->mount($app["api.version"] . '/speciality', new SpecialityController());
+$app->mount($app["api.version"] . '/specialities', new SpecialityController());
+
+// Doctors.
+$app->mount($app["api.version"] . '/doctors', new DoctorController());
 
 // Bookings.
-$app->mount($app["api.version"] . '/booking', new BookingController());
+$app->mount($app["api.version"] . '/doctors/{doctorId}/bookings', new BookingController());
 
 // Catch errors.
 $app->error(function (\Exception $e, $code) use ($app) {

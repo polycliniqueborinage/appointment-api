@@ -16,6 +16,8 @@ Micro Service Appointment API
   nesbot/carbon: A simple API extension for DateTime
 
   nelmio/api-doc-bundle: Generates documentation for your REST API from annotations
+  
+  apigen/apigen: https://github.com/ApiGen/ApiGen
 
   phpunit/phpunit: The PHP Unit Testing framework
 
@@ -25,3 +27,25 @@ Micro Service Appointment API
 ``
 $ composer install
 ``
+
+
+
+## RESTful URLs
+http://www.sitepoint.com/introduction-silex-symfony-micro-framework/
+
+http://www.vinaysahni.com/best-practices-for-a-pragmatic-restful-api#restful
+
+https://developer.github.com/v3/gists/#list-gists
+https://stripe.com/docs/api#create_customer
+
+JSON APIs use snake_case. 
+
+GET /v1/specialities - Retrieves a list of specialities
+GET /specialities/12 - Retrieves a specific speciality
+POST /specialities - Creates a new speciality
+PUT /specialities/12 - Updates speciality #12
+PATCH /specialities/12 - Partially updates speciality #12
+DELETE /specialities/12 - Deletes speciality #12
+
+GET /specialities/12/doctors - Retrieves list of doctors for specialities #12
+GET /specialities/12/doctors/5 - Retrieves doctors #5 for specialities #12
