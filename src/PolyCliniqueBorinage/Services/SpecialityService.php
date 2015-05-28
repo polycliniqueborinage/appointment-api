@@ -15,7 +15,7 @@ class SpecialityService extends BaseService {
    *  Return all specialities.
    */
   public function getAll() {
-    return $this->db->fetchAll("SELECT `id`, `value`, `label_fr` FROM speciality");
+    return $this->db->fetchAll("SELECT `id`, `value`, `label_fr`, `icon` FROM speciality WHERE `online_booking` = 1");
   }
 
   /**
@@ -26,7 +26,7 @@ class SpecialityService extends BaseService {
    *  Return a speciality.
    */
   public function get($id) {
-    return $this->db->fetchAssoc("SELECT * FROM speciality WHERE id = :id", array(
+    return $this->db->fetchAssoc("SELECT `id`, `value`, `label_fr`, `icon` FROM speciality WHERE id = :id AND `online_booking` = 1", array(
       'id' => $id,
       )
     );
