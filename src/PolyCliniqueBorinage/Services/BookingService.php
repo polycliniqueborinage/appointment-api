@@ -49,6 +49,39 @@ class BookingService extends BaseService {
   }
 
   /**
+   * Get all the calendar.
+   *
+   * @param string $id
+   *   Return Calendar.
+   */
+  public function getWeeklyCalendar($id) {
+
+    $week = array();
+    for ($i = 0 ;$i < 7; $i++) {
+      $slots = $this->getAvailableSlots($id, $i);
+      $before_end = NULL;
+      $key = 0;
+      $reset = TRUE;
+
+      foreach ($slots as $slot) {
+        if (isset($slot['carbon_start']) && isset($week[$key]['end']) && $slot['carbon_start']->ne($week[$key]['end'])) {
+          $key ++;
+          $reset = TRUE;
+        }
+
+        if ($reset) {
+          $week[$key]['start'] = $slot['carbon_start'];
+        }
+        $week[$key]['end'] = $slot['carbon_end'];
+
+        $reset = FALSE;
+      }
+    }
+
+    return $week;
+  }
+
+  /**
    * Get all the slot available for a day.
    *
    * @param string $id
@@ -197,21 +230,20 @@ class BookingService extends BaseService {
    * Get all available slots for the a specific date and calendar.
    *
    * @param String $id
-   * @param Carbon $date
-   * @param int $consult_length
+   * @param int $week_day
    *
    * @return array $events
    *   Events lists.
    */
-  protected function getAvailableSlots($id, Carbon $date, $consult_length) {
+  protected function getAvailableSlots($id, $week_day) {
     $slots = $this->db->fetchAll("SELECT `id`, `day` FROM `horaire_presence_" . $id . "` WHERE color = :color AND day = :day", array(
         'color' => BOOKING_SERVICE_ENABLE,
-        'day' => $date->format('w'),
+        'day' => $week_day,
       )
     );
     foreach($slots as $key => $slot) {
       $slots[$key]['carbon_start'] = Carbon::createFromFormat('H:i', str_replace("H", ":", $slots[$key]['id']));
-      $slots[$key]['carbon_end'] = Carbon::createFromFormat('H:i', str_replace("H", ":", $slots[$key]['id']))->addMinutes($consult_length);
+      $slots[$key]['carbon_end'] = Carbon::createFromFormat('H:i', str_replace("H", ":", $slots[$key]['id']))->addMinutes(10);
     }
     return $slots;
   }

@@ -4,6 +4,7 @@ use Symfony\Component\HttpFoundation\Response;
 use PolyCliniqueBorinage\Controllers\DoctorController;
 use PolyCliniqueBorinage\Controllers\SpecialityController;
 use PolyCliniqueBorinage\Controllers\BookingController;
+use PolyCliniqueBorinage\Controllers\CalendarController;
 
 // Front.
 $app->get($app["api.version"] . '/', function () {
@@ -18,6 +19,9 @@ $app->mount($app["api.version"] . '/doctors', new DoctorController());
 
 // Bookings.
 $app->mount($app["api.version"] . '/doctors/{doctorId}/bookings', new BookingController());
+
+// Calendars.
+$app->mount($app["api.version"] . '/doctors/{doctorId}/calendars', new CalendarController());
 
 // Catch errors.
 $app->error(function (\Exception $e, $code) use ($app) {
