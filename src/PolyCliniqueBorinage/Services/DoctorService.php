@@ -5,27 +5,14 @@ namespace PolyCliniqueBorinage\Services;
 class DoctorService extends BaseService {
 
   public function getAll() {
-    return $this->db->fetchAll("SELECT id, firstname, familyname, gender, type, speciality, length_consult, inami FROM user");
+    return $this->db->fetchAll("SELECT `id`, `nom` as `familyname`, `prenom` as `firstname`, `length_consult`, `inami` FROM `medecins` WHERE `type` = 'interne' AND `agenda` ='checked' AND `online_booking` = 1 ORDER BY `familyname`, `firstname`");
   }
 
   public function get($id) {
-    return $this->db->fetchAssoc("SELECT id, firstname, familyname, gender, type, speciality, length_consult, inami FROM user WHERE id = :id", array(
+    return $this->db->fetchAssoc("SELECT `id`, `nom` as `familyname`, `prenom` as `firstname`, `length_consult`, `inami` FROM `medecins` WHERE id = :id AND `type` = 'interne' AND `agenda` ='checked' AND `online_booking` = 1", array(
       'id' => $id,
       )
     );
-  }
-
-  function save($note) {
-    $this->db->insert("user", $note);
-    return $this->db->lastInsertId();
-  }
-
-  function update($id, $note) {
-    return $this->db->update('user', $note, ['id' => $id]);
-  }
-
-  function delete($id) {
-    return $this->db->delete("user", array("id" => $id));
   }
 
 }

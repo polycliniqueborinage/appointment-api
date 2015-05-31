@@ -100,18 +100,23 @@ class BookingService extends BaseService {
    *   Available slots.
    */
   public function getAvailableSlotsByWeek($id, $date) {
-
-    $consult_length = 30;
-
     $date = Carbon::createFromFormat('Y-m-d', $date);
 
     $slots = array();
+
+    $month = Carbon::create($date->year, $date->month, 1, 0, 0, 0);
+    while ($month->weekOfYear == $date->weekOfYear) {
+      if ($this->getAvailableSlotsByDate($id, $month->toDateString())) {
+        $slots[] = @clone $month;
+      }
+      $month->addDay();
+    }
 
     return $slots;
   }
 
   /**
-   * Get all the slot available for a week.
+   * Get all the slot available for a month.
    *
    * @param string $id
    * @param string $date
@@ -119,12 +124,17 @@ class BookingService extends BaseService {
    *   Available slots.
    */
   public function getAvailableSlotsByMonth($id, $date) {
-
-    $consult_length = 30;
-
     $date = Carbon::createFromFormat('Y-m-d', $date);
 
     $slots = array();
+
+    $month = Carbon::create($date->year, $date->month, 1, 0, 0, 0);
+    while ($month->month == $date->month) {
+      if ($this->getAvailableSlotsByDate($id, $month->toDateString())) {
+        $slots[] = @clone $month;
+      }
+      $month->addDay();
+    }
 
     return $slots;
   }
