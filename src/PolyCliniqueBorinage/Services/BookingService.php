@@ -125,15 +125,18 @@ class BookingService extends BaseService {
    */
   public function getAvailableSlotsByMonth($id, $date) {
     $date = Carbon::createFromFormat('Y-m-d', $date);
-
-    $slots = array();
-
     $month = Carbon::create($date->year, $date->month, 1, 0, 0, 0);
+    $slots = array();
+    $i = 0;
+
     while ($month->month == $date->month) {
       if ($this->getAvailableSlotsByDate($id, $month->toDateString())) {
-        $slots[] = @clone $month;
+        $slots[$i]['start'] = @clone $month;
+        $month->addDay();
+        $slots[$i++]['end'] = @clone $month;
+      } else {
+        $month->addDay();
       }
-      $month->addDay();
     }
 
     return $slots;
