@@ -59,20 +59,20 @@ class BookingService extends BaseService {
     $week = array();
     for ($i = 0 ;$i < 7; $i++) {
       $slots = $this->getAvailableSlots($id, $i);
-      $before_end = NULL;
       $key = 0;
       $reset = TRUE;
 
       foreach ($slots as $slot) {
-        if (isset($slot['carbon_start']) && isset($week[$key]['end']) && $slot['carbon_start']->ne($week[$key]['end'])) {
+        // If slot are not next to each other.
+        if (isset($week[$i][$key]['end']) && $slot['carbon_start']->ne($week[$i][$key]['end'])) {
           $key ++;
           $reset = TRUE;
         }
 
         if ($reset) {
-          $week[$key]['start'] = $slot['carbon_start'];
+          $week[$i][$key]['start'] = $slot['carbon_start'];
         }
-        $week[$key]['end'] = $slot['carbon_end'];
+        $week[$i][$key]['end'] = $slot['carbon_end'];
 
         $reset = FALSE;
       }
