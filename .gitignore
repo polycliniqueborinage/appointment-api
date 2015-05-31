@@ -6,3 +6,4 @@ var/cache/**
 var/logs/silex_dev.log
 .idea/
 cache/**
+config/secure.php

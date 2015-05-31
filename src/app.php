@@ -23,9 +23,9 @@ $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
     'mysql_read' => array(
       'driver'    => 'pdo_mysql',
       'host'      => 'localhost',
-      'dbname'    => 'poly',
-      'user'      => 'poly',
-      'password'  => 'poly',
+      'dbname'    => $secure['db.dbname'],
+      'user'      => $secure['db.user'],
+      'password'  => $secure['db.password'],
       'charset'   => 'utf8',
     )
   ),

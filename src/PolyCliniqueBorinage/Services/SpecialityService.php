@@ -15,7 +15,7 @@ class SpecialityService extends BaseService {
    *  Return all specialities.
    */
   public function getAll() {
-    return $this->db->fetchAll("SELECT `id`, `specialite` as `value`, `icon` FROM `specialites` WHERE `online_booking` = 1");
+    return $this->db->fetchAll("SELECT `id`, `specialite` as `value`, `icon` FROM `specialites` WHERE `online_booking` = 1 ORDER BY `specialite` ASC");
   }
 
   /**
@@ -40,7 +40,7 @@ class SpecialityService extends BaseService {
    *  Return all doctors for the current speciality.
    */
   public function getDoctors($id) {
-    return $this->db->fetchAll("SELECT `medecins`.`id`, `medecins`.`nom` as `lastname`, `medecins`.`prenom` as `firstname`, `medecins`.`length_consult` FROM `medecins` , `specialites` WHERE specialites.`id` = `medecins`.specialite AND `medecins`.`type` = 'interne' and `medecins`.`agenda` ='checked' AND `medecins`.`online_booking` = 1 AND specialites.`id` = :id", array(
+    return $this->db->fetchAll("SELECT `medecins`.`id`, `medecins`.`nom` as `familyname`, `medecins`.`prenom` as `firstname`, `medecins`.`length_consult` FROM `medecins` , `specialites` WHERE specialites.`id` = `medecins`.specialite AND `medecins`.`type` = 'interne' and `medecins`.`agenda` ='checked' AND `medecins`.`online_booking` = 1 AND specialites.`id` = :id", array(
         'id' => $id,
       )
     );

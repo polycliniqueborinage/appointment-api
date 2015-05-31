@@ -28,9 +28,21 @@ Micro Service Appointment API
 $ composer install
 ``
 
+Create a file under config/secure.php with the DB settings:
+
+``
+<?php
+
+//  Fake login and password.
+$secure['db.dbname'] = "poly";
+$secure['db.user'] = "poly";
+$secure['db.password'] = "poly";
+``
+
 
 
 ## RESTful URLs
+
 http://www.sitepoint.com/introduction-silex-symfony-micro-framework/
 
 http://www.vinaysahni.com/best-practices-for-a-pragmatic-restful-api#restful
@@ -49,3 +61,9 @@ DELETE /specialities/12 - Deletes speciality #12
 
 GET /specialities/12/doctors - Retrieves list of doctors for specialities #12
 GET /specialities/12/doctors/5 - Retrieves doctors #5 for specialities #12
+
+
+## Database
+
+medecins
+specialites
