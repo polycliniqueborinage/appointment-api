@@ -1,3 +1,4 @@
+composer.lock
 examples/
 vendor/
 .DS_Store
