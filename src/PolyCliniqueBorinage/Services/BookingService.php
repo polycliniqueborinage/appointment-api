@@ -52,6 +52,8 @@ class BookingService extends BaseService {
    * Get all the calendar.
    *
    * @param string $id
+   *
+   * @return array
    *   Return Calendar.
    */
   public function getWeeklyCalendar($id) {
@@ -86,6 +88,7 @@ class BookingService extends BaseService {
    *
    * @param string $id
    * @param string $date
+   *
    * @return array $slots
    *   Available slots.
    */
@@ -104,17 +107,25 @@ class BookingService extends BaseService {
     // Evening slot.
     $evening_slot = $this->getEveningSlot($id, $date);
 
+    // Past slot.
+    $past_slot = $this->getPastSlot();
+
+    // Holiday slots.
+    // @todo : for benjamin.
+    #$holiday_slot = $this->getEveningSlot($id, $date);
+
     // Unavailable slots list.
     $unavailable_slots = $this->getBusySlots($id, $date);
 
     // All busy slots list.
-    $all_busy_slots = array_merge($events, $morning_slot, $evening_slot, $unavailable_slots);
+    $all_busy_slots = array_merge($events, $morning_slot, $evening_slot, $past_slot, $unavailable_slots);
 
     // Slots candidate.
     $slots = array();
 
     // Available slots list.
     $available_slots = $this->getAllSlots($date, $consult_length);
+
     foreach($available_slots as $key => $slot_proposal) {
       if ($this ->isValidSlot($slot_proposal, $all_busy_slots)) {
         $all_busy_slots[] = $slot_proposal;
@@ -303,6 +314,19 @@ class BookingService extends BaseService {
     $slot[0]['type'] = 'evening';
     $slot[0]['carbon_start'] = Carbon::createFromFormat('Y-m-d H:i', $date->toDateString() . ' ' . BOOKING_SERVICE_LAST_HOUR);
     $slot[0]['carbon_end'] = Carbon::createFromFormat('Y-m-d H:i', $date->toDateString() . ' ' . '24:00');
+    return $slot;
+  }
+
+  /**
+   * Get past slot.
+   *
+   * @return array $slot
+   *   Return past slot.
+   */
+  protected function getPastSlot() {
+    $slot[0]['type'] = 'past';
+    $slot[0]['carbon_start'] = Carbon::createFromFormat('Y-m-d H:i', '1978-05-29 00:00');
+    $slot[0]['carbon_end'] = Carbon::createFromFormat('Y-m-d H:i', date('Y-m-d') . ' ' . '24:00');
     return $slot;
   }
 

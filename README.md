@@ -20,6 +20,9 @@ Micro Service Appointment API
   apigen/apigen: https://github.com/ApiGen/ApiGen
 
   phpunit/phpunit: The PHP Unit Testing framework
+  
+  namshi/jose: JSON Object Signing and Encryption library for PHP.
+  https://github.com/namshi/jose
 
 
 ## Install
@@ -33,10 +36,10 @@ Create a file under config/secure.php with the DB settings:
 ``
 <?php
 
-//  Fake login and password.
-$secure['db.dbname'] = "poly";
-$secure['db.user'] = "poly";
-$secure['db.password'] = "poly";
+  //  Fake login and password.
+  $secure['db.dbname'] = "poly";
+  $secure['db.user'] = "poly";
+  $secure['db.password'] = "poly";
 ``
 
 

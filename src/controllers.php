@@ -23,6 +23,9 @@ $app->mount($app["api.version"] . '/doctors/{doctorId}/bookings', new BookingCon
 // Calendars.
 $app->mount($app["api.version"] . '/doctors/{doctorId}/calendars', new CalendarController());
 
+// Holidays.
+// $app->mount($app["api.version"] . '/doctors/{doctorId}/holidays', new HolidayController());
+
 // Catch errors.
 $app->error(function (\Exception $e, $code) use ($app) {
   if ($app['debug']) {
