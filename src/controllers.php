@@ -1,44 +1,31 @@
 <?php
 
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use PolyCliniqueBorinage\Controllers\DoctorController;
-use PolyCliniqueBorinage\Controllers\SpecialityController;
-use PolyCliniqueBorinage\Controllers\BookingController;
-use PolyCliniqueBorinage\Controllers\CalendarController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-// Front.
-$app->get($app["api.version"] . '/', function () {
-  return "PolyClinique API";
-});
+//Request::setTrustedProxies(array('127.0.0.1'));
 
-// Specialities.
-$app->mount($app["api.version"] . '/specialities', new SpecialityController());
+$app->get('/', function () use ($app) {
+    return $app['twig']->render('index.html.twig', array());
+})
+->bind('homepage')
+;
 
-// Doctors.
-$app->mount($app["api.version"] . '/doctors', new DoctorController());
+$app->error(function (\Exception $e, Request $request, $code) use ($app) {
+    if ($app['debug']) {
+        return;
+    }
 
-// Bookings.
-$app->mount($app["api.version"] . '/doctors/{doctorId}/bookings', new BookingController());
+    // 404.html, or 40x.html, or 4xx.html, or error.html
+    $templates = array(
+        'errors/'.$code.'.html.twig',
+        'errors/'.substr($code, 0, 2).'x.html.twig',
+        'errors/'.substr($code, 0, 1).'xx.html.twig',
+        'errors/default.html.twig',
+    );
 
-// Calendars.
-$app->mount($app["api.version"] . '/doctors/{doctorId}/calendars', new CalendarController());
-
-// Holidays.
-// $app->mount($app["api.version"] . '/doctors/{doctorId}/holidays', new HolidayController());
-
-// Catch errors.
-$app->error(function (\Exception $e, $code) use ($app) {
-  if ($app['debug']) {
-    return;
-  }
-
-  // 404.html, or 40x.html, or 4xx.html, or error.html.
-  $templates = array(
-    'errors/'.$code.'.html',
-    'errors/'.substr($code, 0, 2).'x.html',
-    'errors/'.substr($code, 0, 1).'xx.html',
-    'errors/default.html',
-  );
-
-  return new Response($app['twig']->resolveTemplate($templates)->render(array('code' => $code)), $code);
+    return new Response($app['twig']->resolveTemplate($templates)->render(array('code' => $code)), $code);
 });

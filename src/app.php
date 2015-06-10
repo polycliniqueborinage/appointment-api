@@ -2,42 +2,25 @@
 
 use Silex\Application;
 use Silex\Provider\TwigServiceProvider;
-use Silex\Provider\UrlGeneratorServiceProvider;
+use Silex\Provider\RoutingServiceProvider;
 use Silex\Provider\ValidatorServiceProvider;
 use Silex\Provider\ServiceControllerServiceProvider;
-use PolyCliniqueBorinage\ServicesLoader;
-
-// Need to set up timezone.
-date_default_timezone_set('Europe/Brussels');
+use Silex\Provider\HttpFragmentServiceProvider;
 
 $app = new Application();
-
-// Register Services.
-$app->register(new UrlGeneratorServiceProvider());
+$app->register(new RoutingServiceProvider());
+$app->register(new ValidatorServiceProvider());
 $app->register(new ServiceControllerServiceProvider());
 $app->register(new TwigServiceProvider());
+$app->register(new HttpFragmentServiceProvider());
+$app['twig'] = $app->extend('twig', function ($twig, $app) {
+    // add custom globals, filters, tags, ...
 
-// Config DB.
-$app->register(new Silex\Provider\DoctrineServiceProvider(), array(
-  'dbs.options' => array (
-    'mysql_read' => array(
-      'driver'    => 'pdo_mysql',
-      'host'      => 'localhost',
-      'dbname'    => $secure['db.dbname'],
-      'user'      => $secure['db.user'],
-      'password'  => $secure['db.password'],
-      'charset'   => 'utf8',
-    )
-  ),
-));
+    $twig->addFunction(new \Twig_SimpleFunction('asset', function ($asset) use ($app) {
+        return $app['request_stack']->getMasterRequest()->getBasepath().'/'.ltrim($asset, '/');
+    }));
 
-// Config twig.
-$app['twig'] = $app->share($app->extend('twig', function ($twig, $app) {
-  return $twig;
-}));
-
-// Load services.
-$servicesLoader = new ServicesLoader($app);
-$servicesLoader->bindServicesIntoContainer();
+    return $twig;
+});
 
 return $app;
