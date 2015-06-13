@@ -27,7 +27,7 @@ class BookingService extends BaseService {
    *   Return the booking if succeed or FALSE if not.
    *
    */
-  function save($id, $start, $end) {
+  public function save($id, $start, $end) {
 
     // Make sur the table exist.
     if (!$this->tablesExist($id)) {
@@ -37,22 +37,27 @@ class BookingService extends BaseService {
     $carbon_start = new Carbon($start);
     $carbon_end = new Carbon($end);
 
+    $slot_proposal = array();
+    $slot_proposal['start'] = $carbon_start;
+    $slot_proposal['end'] = $carbon_end;
+
     // Make sur the slot is still vacant.
-    // $all_busy_slots = $this->getAllBusySlots($id, $start);
-    // if ($this ->isValidSlot($slot_proposal, $all_busy_slots)) {
-    //  $all_busy_slots[] = $slot_proposal;
-    //  $slots[] = $slot_proposal;
-    //}
+    $all_busy_slots = $this->getAllBusySlots($id, $carbon_start);
 
-    // Get all days events.
-    $events = $this->getEvents($id, $carbon_start);
-    $slot_old_format = $this->getSlotOldFormat($carbon_start, $carbon_end, $events['length']);
+    // Save in the old calendar.
+    // For now only allow Ponchon calendar when doing the test.
+    if ($id === '11111111111' && $this->isValidSlot($slot_proposal, $all_busy_slots)) {
+      $events = $this->getEvents($id, $carbon_start);
 
-    $this->db->insert($id, $slot_old_format);
+      $slot_old_format = $this->getSlotOldFormat($carbon_start, $carbon_end, $events['length']);
+      $this->db->insert('`11111111111`', $slot_old_format);
+      $id = $this->db->lastInsertId();
+      return $id;
+    }
+    else {
+      return FALSE;
+    }
 
-    $id = $this->db->lastInsertId();
-
-    return $id;
   }
 
   /**
@@ -116,7 +121,7 @@ class BookingService extends BaseService {
     $available_slots = $this->getAllSlots($date, $consult_length);
 
     foreach($available_slots as $key => $slot_proposal) {
-      if ($this ->isValidSlot($slot_proposal, $all_busy_slots)) {
+      if ($this->isValidSlot($slot_proposal, $all_busy_slots)) {
         $all_busy_slots[] = $slot_proposal;
         $slots[] = $slot_proposal;
       }

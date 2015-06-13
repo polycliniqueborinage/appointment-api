@@ -53,20 +53,23 @@ http://www.vinaysahni.com/best-practices-for-a-pragmatic-restful-api#restful
 https://developer.github.com/v3/gists/#list-gists
 https://stripe.com/docs/api#create_customer
 
-JSON APIs use snake_case. 
+
+## RESTful Resources
 
 GET /v1/specialities - Retrieves a list of specialities
-GET /specialities/12 - Retrieves a specific speciality
-POST /specialities - Creates a new speciality
-PUT /specialities/12 - Updates speciality #12
-PATCH /specialities/12 - Partially updates speciality #12
-DELETE /specialities/12 - Deletes speciality #12
 
-GET /specialities/12/doctors - Retrieves list of doctors for specialities #12
-GET /specialities/12/doctors/5 - Retrieves doctors #5 for specialities #12
+GET /v1/specialities/19 - Retrieves a specific speciality
 
+GET /v1/specialities/19/doctors - Retrieves list of doctors for specialities #12
+
+GET /v1/doctors/38 - Retrieves doctors #38
+
+GET /v1/doctors/38/bookings/2015-06-12 Retrieves doctors available slots on #2015-06-12
+
+POST /v1/doctors/38/bookings/2015-06-12 Add a booking on #2015-06-12
 
 ## Database
 
 medecins
+
 specialites
