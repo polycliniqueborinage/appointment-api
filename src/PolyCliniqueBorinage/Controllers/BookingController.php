@@ -16,11 +16,6 @@ class BookingController implements ControllerProviderInterface{
 
     $controllers = $app['controllers_factory'];
 
-    // $controllers->get('/test', function(Request $request) use ($app) {
-    //  $response = $app['booking.service']->save('11111111111', '2015-06-15 09:10:00.000000', '2015-06-15 09:25:00.000000');
-    //  return new JsonResponse($response);
-    // });
-
     // http://local.drupal8:8888/index_dev.php/v1/doctors/2/bookings/2015-05-18?interval=day
     $controllers->get('/{date}', function(Request $request, $date) use ($app) {
 

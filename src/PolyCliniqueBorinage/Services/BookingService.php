@@ -10,14 +10,18 @@ const BOOKING_SERVICE_FIRST_HOUR = '7:00';
 const BOOKING_SERVICE_LAST_HOUR = '19:00';
 
 use Carbon\Carbon;
+use Symfony\Component\Security\Core\Util\SecureRandom;
 
 class BookingService extends BaseService {
+
+  /* var $test = new \Doctrine\DBAL\Connection() */
+  /* $test->executeQuery() */
 
   /**
    * Save an event.
    *
    * @param int $id
-   *   The agenda id.
+   *   The agenda id being the inami number.
    * @param string $start
    *   The start datetime.
    * @param string $end
@@ -44,20 +48,59 @@ class BookingService extends BaseService {
     // Make sur the slot is still vacant.
     $all_busy_slots = $this->getAllBusySlots($id, $carbon_start);
 
-    // Save in the old calendar.
     // For now only allow Ponchon calendar when doing the test.
     if ($id === '11111111111' && $this->isValidSlot($slot_proposal, $all_busy_slots)) {
+      // @todo : Add transaction stuff.
       $events = $this->getEvents($id, $carbon_start);
 
+      // Save in the old calendar.
       $slot_old_format = $this->getSlotOldFormat($carbon_start, $carbon_end, $events['length']);
-      $this->db->insert('`11111111111`', $slot_old_format);
-      $id = $this->db->lastInsertId();
-      return $id;
+      $this->db->insert('`' . $id . '`', $slot_old_format);
+      $event_id = $this->db->lastInsertId();
+
+      // Save in the new calendar.
+      $slot_new_format = $this->getSlotNewFormat($carbon_start, $carbon_end, $event_id);
+      $this->db->insert('`agenda`', $slot_new_format);
+      $event_id = $this->db->lastInsertId();
+
+      // Return the event.
+      return $this->get($event_id);
     }
     else {
       return FALSE;
     }
 
+  }
+
+  /**
+   * Delete an event.
+   *
+   * @param string $token
+   *   The event token
+   *
+   * @return array|FALSE
+   *   Return the booking if succeed or FALSE if not.
+   *
+   */
+  public function delete($token) {
+  }
+
+  /**
+   * Get an event.
+   *
+   * @param int $id
+   *   The event id
+   *
+   * @return array|FALSE
+   *   Return the event if succeed or FALSE if not.
+   *
+   */
+  public function get($id) {
+    $result = $this->db->fetchAssoc("SELECT `start`, `end`, `token` FROM `agenda` WHERE id = :id", array(
+        'id' => $id,
+      )
+    );
+    return $result;
   }
 
   /**
@@ -110,6 +153,7 @@ class BookingService extends BaseService {
    *   Available slots for the day.
    */
   public function getAvailableSlotsByDate($id, $date, $consult_length = 15) {
+
     $date = Carbon::createFromFormat('Y-m-d', $date);
 
     $all_busy_slots = $this->getAllBusySlots($id, $date);
@@ -472,6 +516,35 @@ class BookingService extends BaseService {
       $slot['id'] = $midday . ( 3/50 * ($carbon_start->secondsSinceMidnight() - $secondsMidnight13h));
       $slot['top'] = $slot['position'] - $events_length;
     }
+
+    return $slot;
+  }
+
+  /**
+   * Get the the available slot in the old poly format.
+   *
+   * For info 5 minutes slot is 18 pixels height.
+   *
+   * @param Carbon $carbon_start
+   *   Carbon format start datetime
+   * @param Carbon $carbon_end
+   *   Carbon format end datetime
+   * @param int $id
+   *  The id in the old calendar
+   * @return array $slot
+   *   Return old format slot.
+   */
+  private function getSlotNewFormat(Carbon $carbon_start, Carbon $carbon_end, $id) {
+    $generator = new SecureRandom();
+    $random = $generator->nextBytes(64);
+    $token = bin2hex($random);
+
+    $slot['start'] = $carbon_start->toDateTimeString();
+    $slot['end'] = $carbon_end->toDateTimeString();
+    $slot['agenda_id'] = $id;
+    $slot['event_id'] = $id;
+    $slot['user_id'] = $id;
+    $slot['token'] = $token;
 
     return $slot;
   }
