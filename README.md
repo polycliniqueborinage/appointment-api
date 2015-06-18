@@ -46,6 +46,8 @@ Create a file under config/secure.php with the DB settings:
 
 ## RESTful URLs
 
+http://www.sitepoint.com/php-authorization-jwt-json-web-tokens/
+
 http://www.sitepoint.com/introduction-silex-symfony-micro-framework/
 
 http://www.vinaysahni.com/best-practices-for-a-pragmatic-restful-api#restful

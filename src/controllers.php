@@ -5,11 +5,15 @@ use PolyCliniqueBorinage\Controllers\DoctorController;
 use PolyCliniqueBorinage\Controllers\SpecialityController;
 use PolyCliniqueBorinage\Controllers\BookingController;
 use PolyCliniqueBorinage\Controllers\CalendarController;
+use PolyCliniqueBorinage\Controllers\UserController;
 
 // Front.
 $app->get($app["api.version"] . '/', function () {
   return "PolyClinique API";
 });
+
+// Users.
+$app->mount($app["api.version"] . '/users', new UserController());
 
 // Specialities.
 $app->mount($app["api.version"] . '/specialities', new SpecialityController());

@@ -15,6 +15,10 @@ class SpecialityController implements ControllerProviderInterface{
 
     $controllers = $app['controllers_factory'];
 
+    $controllers->get('/test', function(Request $request) use ($app) {
+      return new JsonResponse($app['authentification.service']->createToken());
+    });
+
     // http://local.drupal8:8888/v1/speciality
     $controllers->get('/', function(Request $request) use ($app) {
       return new JsonResponse($app['speciality.service']->getAll());
