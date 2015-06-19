@@ -12,11 +12,14 @@ class AuthenticationService extends BaseService {
   /**
    * Create a token.
    *
+   * @param array $user
+   *   The current user
+   *
    * @return array|FALSE
    *   Return the booking if succeed or FALSE if not.
    *
    */
-  public function createToken() {
+  public function createToken($user) {
 
     $secure['key.private'] = "-----BEGIN RSA PRIVATE KEY-----
 MIICXAIBAAKBgQDfmlc2EgrdhvakQApmLCDOgP0nNERInBheMh7J/r5aU8PUAIpG
@@ -38,14 +41,12 @@ Ya8iBJilFm2UlcXfpUOk9bhBTbgFp+Bv6BZ2Alag7pY=
       'alg' => 'RS256'
     ));
 
-    $jws->setPayload(array(
-      'uid' => 2,
-    ));
+    $jws->setPayload($user);
 
     $privateKey = openssl_pkey_get_private($secure['key.private'], self::SSL_KEY_PASSPHRASE);
     $jws->sign($privateKey);
 
-    // Add expiration.
+    // @todo: Add expiration.
 
     return $jws->getTokenString();
   }

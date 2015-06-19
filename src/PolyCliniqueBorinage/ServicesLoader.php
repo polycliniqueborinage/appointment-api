@@ -28,5 +28,9 @@ class ServicesLoader {
     $this->app['authentification.service'] = $this->app->share(function () {
       return new Services\AuthenticationService($this->app["db"]);
     });
+
+    $this->app['user.service'] = $this->app->share(function () {
+      return new Services\UserService($this->app["db"]);
+    });
   }
 }

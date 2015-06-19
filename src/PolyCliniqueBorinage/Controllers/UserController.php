@@ -7,7 +7,6 @@ use Silex\Application;
 use Silex\Route;
 
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class UserController implements ControllerProviderInterface{
@@ -18,20 +17,31 @@ class UserController implements ControllerProviderInterface{
 
     $controllers->post('/authenticate', function(Request $request) use ($app) {
 
-      if (0 === strpos($request->headers->get('Content-Type'), 'application/json')) {
-        $data = json_decode($request->getContent(), true);
+      $data = json_decode($request->getContent(), true);
 
-        return new JsonResponse($data);
+      if(isset($data['username']) && isset($data['password'])) {
+
+        // Encode password.
+
+        $user = $app['user.service']->get($data['username'], $data['password']);
+        if ($user) {
+          // Create token.
+          $token = $app['authentification.service']->createToken($user);
+          return new JsonResponse($token);
+        }
+        else {
+          return new JsonResponse('Wrong username and password', 400);
+        }
+      }
+      else {
+        return new JsonResponse('You need to provide a username and password', 400);
       }
 
     });
 
-
-    $controllers->get('/authenticate', function(Request $request) use ($app) {
-
-      return new JsonResponse('true');
-
-    });
+    //$controllers->get('/authenticate', function(Request $request) use ($app) {
+    //  return new JsonResponse($app['user.service']->get('d', 'd'));
+    //});
 
     return $controllers;
   }

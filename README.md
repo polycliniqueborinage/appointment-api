@@ -75,3 +75,5 @@ POST /v1/doctors/38/bookings/2015-06-12 Add a booking on #2015-06-12
 medecins
 
 specialites
+
+authentification
