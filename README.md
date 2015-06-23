@@ -55,6 +55,8 @@ http://www.vinaysahni.com/best-practices-for-a-pragmatic-restful-api#restful
 https://developer.github.com/v3/gists/#list-gists
 https://stripe.com/docs/api#create_customer
 
+http://gonzalo123.com/2014/05/05/token-based-authentication-with-silex-applications/
+
 
 ## RESTful Resources
 
