@@ -41,12 +41,24 @@ Ya8iBJilFm2UlcXfpUOk9bhBTbgFp+Bv6BZ2Alag7pY=
       'alg' => 'RS256'
     ));
 
+    // iss: The issuer of the token
+    // sub: The subject of the token
+    // aud: The audience of the token
+    // exp: Token expiration time defined in Unix time
+    // nbf: “Not before” time that identifies the time before which the JWT must not be accepted for processing
+    // iat: “Issued at” time, in Unix time, at which the token was issued
+    // jti: JWT ID claim provides a unique identifier for the JWT
+
+    // “iss”: “toptal.com”,
+    // “exp”: 1426420800,
+    // “http://toptal.com/jwt_claims/is_admin”: true,
+    // “company”: “Toptal”,
+    // “awesome”: true
+
     $jws->setPayload($user);
 
     $privateKey = openssl_pkey_get_private($secure['key.private'], self::SSL_KEY_PASSPHRASE);
     $jws->sign($privateKey);
-
-    // @todo: Add expiration.
 
     return $jws->getTokenString();
   }
