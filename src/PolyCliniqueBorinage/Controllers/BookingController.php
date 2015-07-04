@@ -37,23 +37,30 @@ class BookingController implements ControllerProviderInterface{
 
     $controllers->post('/{date}', function(Request $request, $date) use ($app) {
 
+      if (0 === strpos($request->headers->get('Content-Type'), 'application/json')) {
+        $data = json_decode($request->getContent(), true);
+        $request->request->replace(is_array($data) ? $data : array());
+      }
+
       // Get the doctor.
       $doctor = $app['doctor.service']->get($request->get('doctorId'));
 
-      if (0 === strpos($request->headers->get('Content-Type'), 'application/json')) {
-        $data = json_decode($request->getContent(), true);
+      // Get start date
+      $start = $request->request->get('start');
 
-        $response = $app['booking.service']->save($doctor['inami'], $data['start'], $data['end']);
+      // Get end date
+      $end = $request->request->get('end');
 
-        // Check if booking still available.
-        if ($response) {
-          return new JsonResponse($response);
-        }
-        else {
-          return new JsonResponse(FALSE, 400);
-        }
+      // Save the slot.
+      $response = $app['booking.service']->save($doctor['inami'], $start, $end);
 
+      if ($response) {
+        return new JsonResponse($response);
       }
+      else {
+        return new JsonResponse(FALSE, 400);
+      }
+
     });
 
     return $controllers;

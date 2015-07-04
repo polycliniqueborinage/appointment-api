@@ -48,6 +48,12 @@ class BookingService extends BaseService {
     // Make sur the slot is still vacant.
     $all_busy_slots = $this->getAllBusySlots($id, $carbon_start);
 
+    // return $slot_proposal;
+
+    return $all_busy_slots;
+
+    return $this->isValidSlot($slot_proposal, $all_busy_slots);
+
     // For now only allow Ponchon calendar when doing the test.
     if ($id === '11111111111' && $this->isValidSlot($slot_proposal, $all_busy_slots)) {
       // @todo : Add transaction stuff.
